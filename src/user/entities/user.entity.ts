@@ -1,17 +1,17 @@
 // user.entity.ts
 
-import { Resume } from 'src/resume/entities/resume.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Resume } from '../../resume/entities/resume.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, } from 'typeorm';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({unique : true,})
   username: string;
 
-  @Column()
+  @Column({unique : true,})
   email: string;
 
   @Column()

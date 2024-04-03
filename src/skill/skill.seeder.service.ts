@@ -1,5 +1,4 @@
 // skill.seeder.service.ts
-
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,10 +13,19 @@ export class SkillSeederService {
   ) {}
 
   async seed() {
-    const fakeSkills = Array.from({ length: 10 }, () => ({
-      label: randSkill(),
-    }));
-
+    const existingSkills = await this.skillRepository.find();
+  
+    const existingLabels = new Set(existingSkills.map((skill) => skill.label));
+  
+    const fakeSkills = Array.from({ length: 20 }, () => {
+      let label = randSkill();
+      while (existingLabels.has(label)) {
+        label = randSkill();
+      }
+      existingLabels.add(label);
+      return { label };
+    });
+  
     await this.skillRepository.save(fakeSkills);
   }
 }

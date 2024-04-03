@@ -14,22 +14,22 @@ import {
   randUrl,
   randUserName,
 } from '@ngneat/falso';
-import { Skill } from 'src/skill/entities/skill.entity';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../user/entities/user.entity';
+import { Skill } from '../skill/entities/skill.entity';
 
 @Injectable()
 export class ResumeSeederService {
-  userRepository: any;
   constructor(
     @InjectRepository(Resume)
     private readonly resumeRepository: Repository<Resume>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Skill)
     private readonly skillRepository: Repository<Skill>,
   ) {}
 
-  async createResume(user: User): Promise<Resume> {
-    const skills = await this.skillRepository.find();
-
+  async createResume(user: User, existingSkills: Skill[]): Promise<Resume> {
+    const skills = existingSkills.slice(0, Math.floor(Math.random() * existingSkills.length));
     const fakeResume = {
       firstname: randFirstName(),
       lastname: randLastName(),
@@ -38,25 +38,25 @@ export class ResumeSeederService {
       job: randJobTitle(),
       path: randUrl(),
       user: user,
-      skills: skills.slice(0, 3), // Assuming each resume has 3 skills
+      skills: skills,
     };
 
     return await this.resumeRepository.save(fakeResume);
   }
 
   async seed() {
-    const fakeResumes = Array.from({ length: 10 }, async () => {
-      const user = await this.userRepository.create({
-        username: randUserName(),
-        email: randEmail(),
-        password: randPassword(),
-      });
+    const existingUsers = await this.userRepository.find();
 
-      const resumes = Array.from({ length: 2 }, () => this.createResume(user));
-      user.resumes = await Promise.all(resumes);
+    const existingSkills = await this.skillRepository.find();
 
-      return user;
-    });
+    const fakeResumes = await Promise.all(
+      existingUsers.map(async (user) => {
+        const resumes = Array.from({ length: 2 }, () => this.createResume(user, existingSkills));
+        user.resumes = await Promise.all(resumes);
+
+        return user;
+      })
+    );
 
     await this.userRepository.save(fakeResumes);
   }

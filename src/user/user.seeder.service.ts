@@ -23,13 +23,6 @@ export class UserSeederService {
           email: randEmail(),
           password: randPassword(),
         });
-        const resumes = await Promise.all(
-          Array.from({ length: 2 }, () =>
-            this.resumeSeederService.createResume(user),
-          ),
-        );
-        user.resumes = resumes;
-
         return user;
       }),
     );

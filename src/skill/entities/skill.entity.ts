@@ -1,23 +1,25 @@
 // skill.entity.ts
 
-import { Resume } from 'src/resume/entities/resume.entity';
+import { Resume } from '../../resume/entities/resume.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
   JoinTable,
+  Unique,
 } from 'typeorm';
 
 @Entity()
 export class Skill {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  _id: string;
 
-  @Column()
+  @Column({
+    unique : true,
+  })
   label: string;
 
   @ManyToMany(() => Resume, (resume) => resume.skills)
-  @JoinTable()
   resumes: Resume[];
 }
