@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { Repository } from 'typeorm';
@@ -7,24 +7,44 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class SkillService {
+  constructor(
+    @InjectRepository(Skill)
+    private readonly skillRepository: Repository<Skill>,
+  ) {}
 
-  create(createSkillDto: CreateSkillDto) {
-    return 'This action adds a new skill';
+  async createSkill(skillDto: CreateSkillDto): Promise<Skill> {
+    const skill = this.skillRepository.create(skillDto);
+    return await this.skillRepository.save(skill);
   }
 
-  findAll() {
-    return `This action returns all skill`;
+  async getSkills(): Promise<Skill[]> {
+    return await this.skillRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} skill`;
+  async getSkillById(id: string): Promise<Skill> {
+    const skill = await this.skillRepository.findOneBy({id})
+    if (!skill) {
+      throw new NotFoundException(`Skill with ID ${id} not found`);
+    }
+    return skill;
   }
 
-  update(id: number, updateSkillDto: UpdateSkillDto) {
-    return `This action updates a #${id} skill`;
+  async updateSkill(id: string, updateSkillDto: UpdateSkillDto): Promise<Skill> {
+    const skill = await this.skillRepository.findOneBy({id});
+    if (!skill) {
+      throw new NotFoundException(`Skill with ID ${id} not found`);
+    }
+
+    this.skillRepository.merge(skill, updateSkillDto);
+    return await this.skillRepository.save(skill);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} skill`;
+  async deleteSkill(id: string): Promise<void> {
+    const skill = await this.skillRepository.findOneBy({id});
+    if (!skill) {
+      throw new NotFoundException(`Skill with ID ${id} not found`);
+    }
+
+    await this.skillRepository.remove(skill);
   }
 }

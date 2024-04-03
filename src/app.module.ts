@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,6 +16,12 @@ import { UserSeederService } from './user/user.seeder.service';
 import { User } from './user/entities/user.entity';
 import { Skill } from './skill/entities/skill.entity';
 import { Resume } from './resume/entities/resume.entity';
+import { SkillController } from './skill/skill.controller';
+import { UserController } from './user/user.controller';
+import { ResumeController } from './resume/resume.controller';
+import { UserService } from './user/user.service';
+import { SkillService } from './skill/skill.service';
+import { ResumeService } from './resume/resume.service';
 
 @Module({
   imports: [
@@ -38,7 +46,11 @@ import { Resume } from './resume/entities/resume.entity';
     ResumeSeederService,
     SkillSeederService,
     UserSeederService,
+    UserService,
+    SkillService,
+    ResumeService
   ],
-  controllers: [AppController],
+  controllers: [AppController, SkillController, UserController, ResumeController],
 })
-export class AppModule {}
+export class AppModule {
+}

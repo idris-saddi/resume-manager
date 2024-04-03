@@ -13,7 +13,7 @@ import {
 @Entity()
 export class Skill {
   @PrimaryGeneratedColumn('uuid')
-  _id: string;
+  id: string;
 
   @Column({
     unique : true,

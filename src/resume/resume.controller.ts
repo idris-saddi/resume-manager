@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+// resume/resume.controller.ts
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { ResumeService } from './resume.service';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
+import { Resume } from './entities/resume.entity';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('resume')
+@ApiTags('resumes')
+@Controller('resumes')
 export class ResumeController {
   constructor(private readonly resumeService: ResumeService) {}
 
   @Post()
-  create(@Body() createResumeDto: CreateResumeDto) {
-    return this.resumeService.create(createResumeDto);
+  async createResume(@Body() createResumeDto: CreateResumeDto): Promise<Resume> {
+    return this.resumeService.createResume(createResumeDto);
   }
 
   @Get()
-  findAll() {
-    return this.resumeService.findAll();
+  async getResumes(): Promise<Resume[]> {
+    return this.resumeService.getResumes();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.resumeService.findOne(+id);
+  async getResumeById(@Param('id') id: string): Promise<Resume> {
+    return this.resumeService.getResumeById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateResumeDto: UpdateResumeDto) {
-    return this.resumeService.update(+id, updateResumeDto);
+  @Put(':id')
+  async updateResume(@Param('id') id: string, @Body() updateResumeDto: UpdateResumeDto): Promise<Resume> {
+    return this.resumeService.updateResume(id, updateResumeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.resumeService.remove(+id);
+  async deleteResume(@Param('id') id: string): Promise<void> {
+    return this.resumeService.deleteResume(id);
   }
 }

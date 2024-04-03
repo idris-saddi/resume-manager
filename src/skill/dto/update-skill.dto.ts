@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateSkillDto } from './create-skill.dto';
+// update-skill.dto.ts
 
-export class UpdateSkillDto extends PartialType(CreateSkillDto) {}
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional } from 'class-validator';
+
+export class UpdateSkillDto {
+  @ApiProperty({ description: 'The label of the skill (optional)' })
+  @IsString()
+  @IsOptional()
+  readonly label?: string;
+}
