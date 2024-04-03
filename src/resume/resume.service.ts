@@ -4,6 +4,7 @@ import { UpdateResumeDto } from './dto/update-resume.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Resume } from './entities/resume.entity';
+import { AgeCriteriaDto } from './dto/age-criteria.dto';
 
 @Injectable()
 export class ResumeService {
@@ -17,8 +18,22 @@ export class ResumeService {
     return await this.resumeRepository.save(resume);
   }
 
-  async getResumes(): Promise<Resume[]> {
-    return await this.resumeRepository.find();
+  async getResumes(ageCriteriaDto: AgeCriteriaDto): Promise<Resume[]> {
+    const { age, criteria } = ageCriteriaDto;
+    let query = this.resumeRepository.createQueryBuilder('resume');
+
+    if (age) {
+      query = query.where('resume.age = :age', { age });
+    }
+
+    if (criteria) {
+      query = query.andWhere(
+        '(resume.firstname LIKE :criteria OR resume.lastname LIKE :criteria OR resume.job LIKE :criteria)',
+        { criteria: `%${criteria}%` },
+      );
+    }
+
+    return query.getMany();
   }
 
   async getResumeById(id: string): Promise<Resume> {

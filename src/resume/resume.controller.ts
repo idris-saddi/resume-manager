@@ -1,10 +1,11 @@
 // resume/resume.controller.ts
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { ResumeService } from './resume.service';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { Resume } from './entities/resume.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { AgeCriteriaDto } from './dto/age-criteria.dto';
 
 @ApiTags('resumes')
 @Controller('resumes')
@@ -17,8 +18,8 @@ export class ResumeController {
   }
 
   @Get()
-  async getResumes(): Promise<Resume[]> {
-    return this.resumeService.getResumes();
+  async getResumes(@Query() ageCriteriaDto: AgeCriteriaDto) : Promise<Resume[]> {
+    return this.resumeService.getResumes(ageCriteriaDto);
   }
 
   @Get(':id')
