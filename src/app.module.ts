@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { NestFactory } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -22,6 +20,9 @@ import { ResumeController } from './resume/resume.controller';
 import { UserService } from './user/user.service';
 import { SkillService } from './skill/skill.service';
 import { ResumeService } from './resume/resume.service';
+import { AuthMiddleware } from './middlewares/auth.middleware';
+import { AuthService } from './user/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -48,7 +49,10 @@ import { ResumeService } from './resume/resume.service';
     UserSeederService,
     UserService,
     SkillService,
-    ResumeService
+    ResumeService,
+    AuthService,
+    AuthMiddleware,
+    JwtService
   ],
   controllers: [AppController, SkillController, UserController, ResumeController],
 })

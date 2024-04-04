@@ -22,11 +22,15 @@ export class UserService {
   }
 
   async getUserById(id: string): Promise<User> {
-    return await this.userRepository.findOneBy({id});
+    return await this.userRepository.findOneBy({ id });
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOneBy({id});
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -36,7 +40,7 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    const user = await this.userRepository.findOneBy({id});
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -44,4 +48,3 @@ export class UserService {
     await this.userRepository.remove(user);
   }
 }
-

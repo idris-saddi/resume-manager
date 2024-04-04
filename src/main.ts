@@ -12,9 +12,17 @@ async function bootstrap() {
     .setTitle('Resume Manager API')
     .setDescription('Resume Manager API Discription')
     .setVersion('1.0')
+    .addBearerAuth({
+      type: "http",
+      scheme: "bearer",
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  await app.listen(3000);
+  await app.listen(4949);
+
+  console.log(
+    `🚀🚀🚀🚀 Application is running on: http://localhost:4949/api 🚀`
+  );
 }
 bootstrap();
