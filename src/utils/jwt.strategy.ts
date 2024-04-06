@@ -21,9 +21,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
 
-    const userId = payload.sub;
-    req['id'] = userId;
+    const userId = payload.id;
+    req['userId'] = userId;
 
-    return { id: payload.sub, username: payload.username, email : payload.email };
+    return { id: payload.id, username: payload.username, email : payload.email };
   }
 }

@@ -47,7 +47,7 @@ export class UserController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthMiddleware, AuthGuard('jwt'))
   @ApiBearerAuth()
   async updateUser(
     @Param('id') id: string,
@@ -55,6 +55,7 @@ export class UserController {
     @Req() req: Request,
   ): Promise<User> {
     const userId = req['userId']; // Get the user id from the request
+    // console.log(req)
     const user = await this.userService.getUserById(id);
 
     if (!user) {
@@ -76,7 +77,7 @@ export class UserController {
     @Param('id') id: string,
     @Req() req: Request,
   ): Promise<void> {
-    const userId = req['id']; // Get the user id from the request
+    const userId = req['userId']; // Get the user id from the request
     const user = await this.userService.getUserById(id);
 
     if (!user) {

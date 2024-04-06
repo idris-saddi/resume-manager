@@ -17,14 +17,16 @@ export class AuthMiddleware implements NestMiddleware {
     }
 
     const token = authHeader.split(' ')[1];
-
     try {
       const decodedToken = verify(token, jwtSecret) as JwtPayload;
-
-      req['id'] = decodedToken;
+      req['userId'] = decodedToken.id;
+      
       next();
     } catch (error) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
   }
 }
+
+
+

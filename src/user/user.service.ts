@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
@@ -33,6 +33,13 @@ export class UserService {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    if (updateUserDto.username && updateUserDto.username !== user.username) {
+      const existingUser = await this.userRepository.findOne({ where: { username: updateUserDto.username } });
+      if (existingUser) {
+        throw new ConflictException(`Username ${updateUserDto.username} is already taken`);
+      }
     }
 
     this.userRepository.merge(user, updateUserDto);
