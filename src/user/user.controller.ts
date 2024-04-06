@@ -8,10 +8,10 @@ import {
   Put,
   Delete,
   UseGuards,
-  UnauthorizedException,
   Req,
   NotFoundException,
   ForbiddenException,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,12 +19,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'src/middlewares/auth.middleware';
-import { LoginDto } from './dto/login.dto';
-import { AuthService } from './auth.service';
+import { AuthService } from '../utils/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('users')
 @Controller('users')
+@ApiBearerAuth()
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -47,15 +47,13 @@ export class UserController {
   }
 
   @Put(':id')
-  @UseGuards(AuthMiddleware, AuthGuard('jwt'))
-  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @Req() req: Request,
   ): Promise<User> {
     const userId = req['userId']; // Get the user id from the request
-    // console.log(req)
     const user = await this.userService.getUserById(id);
 
     if (!user) {
@@ -71,8 +69,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'), AuthMiddleware)
-  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   async deleteUser(
     @Param('id') id: string,
     @Req() req: Request,
@@ -90,16 +87,9 @@ export class UserController {
 
     await this.userService.deleteUser(id);
   }
-
-  @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    const user = await this.authService.validateUser(
-      loginDto.email,
-      loginDto.password,
-    );
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return this.authService.login(user);
+  
+  @Patch('restore/:id')
+  restore(@Param('id') id: string) : Promise<User> {
+    return this.userService.restoreUser(id);
   }
 }

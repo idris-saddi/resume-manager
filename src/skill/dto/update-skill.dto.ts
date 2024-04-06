@@ -1,11 +1,10 @@
 // update-skill.dto.ts
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class UpdateSkillDto {
-  @ApiProperty({ description: 'The label of the skill (optional)' })
+  @ApiProperty({required: false, description: 'The label of the skill (optional)' })
   @IsString()
-  @IsOptional()
   readonly label?: string;
 }

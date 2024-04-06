@@ -1,4 +1,5 @@
 // resume/resume.controller.ts
+
 import {
   Controller,
   Get,
@@ -7,24 +8,23 @@ import {
   Param,
   Put,
   Delete,
-  Query,
   UseGuards,
+  Patch,
   Req,
-  NotFoundException,
-  ForbiddenException,
+  Query,
 } from '@nestjs/common';
 import { ResumeService } from './resume.service';
-import { CreateResumeDto } from './dto/create-resume.dto';
-import { UpdateResumeDto } from './dto/update-resume.dto';
 import { Resume } from './entities/resume.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AgeCriteriaDto } from './dto/age-criteria.dto';
 import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 import { AuthGuard } from '@nestjs/passport';
+import { CreateResumeDto } from './dto/create-resume.dto';
+import { UpdateResumeDto } from './dto/update-resume.dto';
+import { AgeCriteriaDto } from './dto/age-criteria.dto';
 
 @ApiTags('resumes')
 @Controller('resumes')
-@UseGuards(AuthMiddleware)
+@ApiBearerAuth()
 export class ResumeController {
   constructor(private readonly resumeService: ResumeService) {}
 
@@ -38,53 +38,49 @@ export class ResumeController {
     return this.resumeService.getResumeById(id);
   }
 
+  @Get('user/:userId')
+  async getResumeByUser(@Param('userId') userId: string): Promise<Resume[]> {
+    return this.resumeService.getResumesByUser(userId);
+  }
+
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth()
   async createResume(
-    @Body() createResumeDto: CreateResumeDto,
+    @Body() resumeData: CreateResumeDto,
+    @Req() req: Request,
   ): Promise<Resume> {
-    return this.resumeService.createResume(createResumeDto);
+    const userId = req['userId'];
+    return this.resumeService.createResume(userId, resumeData);
   }
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth()
   async updateResume(
     @Param('id') id: string,
-    @Body() updateResumeDto: UpdateResumeDto,
+    @Body() resumeData: UpdateResumeDto,
     @Req() req: Request,
   ): Promise<Resume> {
-    const userId = req['id']; // Get the user id from the request
-    const resume = await this.resumeService.getResumeById(id);
-
-    if (!resume) {
-      throw new NotFoundException('Resume not found');
-    }
-
-    if (userId !== resume.user.id) {
-      throw new ForbiddenException('You are not allowed to update this resume');
-    }
-    return this.resumeService.updateResume(id, updateResumeDto);
+    const userId = req['userId']; // Get the user id from the request
+    return this.resumeService.updateResume(userId, id, resumeData);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth()
   async deleteResume(
     @Param('id') id: string,
     @Req() req: Request,
   ): Promise<void> {
-    const userId = req['id']; // Get the user id from the request
-    const resume = await this.resumeService.getResumeById(id);
+    const userId = req['userId'];
+    await this.resumeService.deleteResume(userId, id);
+  }
 
-    if (!resume) {
-      throw new NotFoundException('Resume not found');
-    }
-
-    if (userId !== resume.user.id) {
-      throw new ForbiddenException('You are not allowed to delete this resume');
-    }
-    return this.resumeService.deleteResume(id);
+  @Patch('restore/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async restoreResume(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<Resume> {
+    const userId = req['userId'];
+    return this.resumeService.restoreResume(userId, id);
   }
 }

@@ -13,6 +13,8 @@ export class AuthMiddleware implements NestMiddleware {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log("header prob");
+      
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
@@ -23,6 +25,8 @@ export class AuthMiddleware implements NestMiddleware {
       
       next();
     } catch (error) {
+      console.log("error while verifing payload in the middelware");
+      
       return res.status(401).json({ message: 'Unauthorized' });
     }
   }

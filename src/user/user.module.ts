@@ -5,7 +5,7 @@ import { UserSeederService } from './user.seeder.service';
 import { ResumeModule } from '../resume/resume.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UserService } from './user.service';
-import { AuthService } from './auth.service';
+import { AuthService } from '../utils/auth.service';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/utils/jwt.strategy';

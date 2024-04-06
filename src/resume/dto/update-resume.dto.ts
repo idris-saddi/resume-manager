@@ -4,32 +4,32 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class UpdateResumeDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({ description: 'The first name of the user', required: false })
   @IsString()
   @IsOptional()
   readonly firstname?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ description: 'The last name of the user', required: false })
   @IsString()
   @IsOptional()
   readonly lastname?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ description: 'The age of the user', required: false })
   @IsNumber()
   @IsOptional()
   readonly age?: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ description: 'The CIN (national identification number) of the user', required: false })
   @IsNumber()
   @IsOptional()
   readonly cin?: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ description: 'The job of the user', required: false })
   @IsString()
   @IsOptional()
   readonly job?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ description: 'The path of the resume file', required: false })
   @IsString()
   @IsOptional()
   readonly path?: string;

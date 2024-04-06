@@ -1,10 +1,11 @@
 // user.entity.ts
 
+import { Timestamp } from '../../utils/timestamp.entity';
 import { Resume } from '../../resume/entities/resume.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity()
-export class User {
+export class User extends Timestamp {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

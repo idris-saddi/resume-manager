@@ -1,7 +1,7 @@
 // create-user.dto.ts
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'The username of the user' })
@@ -9,6 +9,7 @@ export class CreateUserDto {
   readonly username: string;
 
   @ApiProperty({ description: 'The email address of the user' })
+  @IsEmail()
   @IsString()
   readonly email: string;
 

@@ -1,9 +1,10 @@
+// skill/skill.service.ts
+
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateSkillDto } from './dto/create-skill.dto';
-import { UpdateSkillDto } from './dto/update-skill.dto';
 import { Repository } from 'typeorm';
-import { Skill } from './entities/skill.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Skill } from './entities/skill.entity';
+import { CreateSkillDto } from './dto/create-skill.dto';
 
 @Injectable()
 export class SkillService {
@@ -22,29 +23,40 @@ export class SkillService {
   }
 
   async getSkillById(id: string): Promise<Skill> {
-    const skill = await this.skillRepository.findOneBy({id})
+    const skill = await this.skillRepository.findOneBy({id});
     if (!skill) {
       throw new NotFoundException(`Skill with ID ${id} not found`);
     }
     return skill;
   }
 
-  async updateSkill(id: string, updateSkillDto: UpdateSkillDto): Promise<Skill> {
+  async updateSkill(id: string, skillData: any): Promise<Skill> {
     const skill = await this.skillRepository.findOneBy({id});
     if (!skill) {
       throw new NotFoundException(`Skill with ID ${id} not found`);
     }
 
-    this.skillRepository.merge(skill, updateSkillDto);
+    this.skillRepository.merge(skill, skillData);
     return await this.skillRepository.save(skill);
   }
 
   async deleteSkill(id: string): Promise<void> {
-    const skill = await this.skillRepository.findOneBy({id});
+    const skill = await this.skillRepository.findOneBy({ id });
     if (!skill) {
       throw new NotFoundException(`Skill with ID ${id} not found`);
     }
 
-    await this.skillRepository.remove(skill);
+    skill.deletedAt = skill.deletedAt ? null : new Date(); // Set the soft delete timestamp
+    await this.skillRepository.save(skill);
+  }
+
+  async restoreSkill(id: string): Promise<Skill> {
+    const result = await this.skillRepository.restore(id);
+
+    if (!result.affected) {
+      throw new NotFoundException(`Skill with ID ${id} not found`);
+    }
+
+    return this.getSkillById(id);
   }
 }

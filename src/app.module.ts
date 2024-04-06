@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -21,7 +26,7 @@ import { UserService } from './user/user.service';
 import { SkillService } from './skill/skill.service';
 import { ResumeService } from './resume/resume.service';
 import { AuthMiddleware } from './middlewares/auth.middleware';
-import { AuthService } from './user/auth.service';
+import { AuthService } from './utils/auth.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
@@ -52,13 +57,26 @@ import { JwtService } from '@nestjs/jwt';
     ResumeService,
     AuthService,
     AuthMiddleware,
-    JwtService
+    JwtService,
   ],
-  controllers: [AppController, SkillController, UserController, ResumeController],
+  controllers: [
+    AppController,
+    SkillController,
+    UserController,
+    ResumeController,
+  ],
 })
-
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('*');
+    consumer
+      .apply(AuthMiddleware)
+      .exclude(
+        { path: 'login', method: RequestMethod.POST },
+        {
+          path: '/',
+          method: RequestMethod.ALL,
+        },
+      ) // Exclude the login route
+      .forRoutes('*');
   }
 }

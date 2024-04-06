@@ -2,6 +2,7 @@
 
 import { Skill } from '../../skill/entities/skill.entity';
 import { User } from '../../user/entities/user.entity';
+import { Timestamp } from '../../utils/timestamp.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -12,7 +13,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Resume {
+export class Resume extends Timestamp {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

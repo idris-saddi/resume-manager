@@ -1,4 +1,5 @@
 // skill/skill.controller.ts
+
 import {
   Controller,
   Get,
@@ -8,17 +9,19 @@ import {
   Put,
   Delete,
   UseGuards,
+  NotFoundException,
+  Patch,
 } from '@nestjs/common';
 import { SkillService } from './skill.service';
+import { Skill } from './entities/skill.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
-import { Skill } from './entities/skill.entity';
-import { ApiTags } from '@nestjs/swagger';
-import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 
 @ApiTags('skills')
 @Controller('skills')
-@UseGuards(AuthMiddleware)
+@ApiBearerAuth()
 export class SkillController {
   constructor(private readonly skillService: SkillService) {}
 
@@ -27,26 +30,31 @@ export class SkillController {
     return this.skillService.getSkills();
   }
 
-  @Post()
-  async createSkill(@Body() createSkillDto: CreateSkillDto): Promise<Skill> {
-    return this.skillService.createSkill(createSkillDto);
-  }
-
   @Get(':id')
   async getSkillById(@Param('id') id: string): Promise<Skill> {
     return this.skillService.getSkillById(id);
   }
 
+  @Post()
+  async createSkill(@Body() skillData: CreateSkillDto): Promise<Skill> {
+    return this.skillService.createSkill(skillData);
+  }
+
   @Put(':id')
   async updateSkill(
     @Param('id') id: string,
-    @Body() updateSkillDto: UpdateSkillDto,
+    @Body() skillData: UpdateSkillDto,
   ): Promise<Skill> {
-    return this.skillService.updateSkill(id, updateSkillDto);
+    return this.skillService.updateSkill(id, skillData);
   }
 
   @Delete(':id')
   async deleteSkill(@Param('id') id: string): Promise<void> {
-    return this.skillService.deleteSkill(id);
+    await this.skillService.deleteSkill(id);
+  }
+
+  @Patch('restore/:id')
+  async restoreSkill(@Param('id') id: string): Promise<Skill> {
+    return this.skillService.restoreSkill(id);
   }
 }

@@ -1,9 +1,14 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { Resume } from 'src/resume/entities/resume.entity';
 
 @Injectable()
 export class UserService {
@@ -22,7 +27,11 @@ export class UserService {
   }
 
   async getUserById(id: string): Promise<User> {
-    return await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
   async getUserByEmail(email: string): Promise<User> {
@@ -36,9 +45,13 @@ export class UserService {
     }
 
     if (updateUserDto.username && updateUserDto.username !== user.username) {
-      const existingUser = await this.userRepository.findOne({ where: { username: updateUserDto.username } });
+      const existingUser = await this.userRepository.findOne({
+        where: { username: updateUserDto.username },
+      });
       if (existingUser) {
-        throw new ConflictException(`Username ${updateUserDto.username} is already taken`);
+        throw new ConflictException(
+          `Username ${updateUserDto.username} is already taken`,
+        );
       }
     }
 
@@ -52,6 +65,17 @@ export class UserService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    await this.userRepository.remove(user);
+    user.deletedAt = user.deletedAt ? null : new Date(); // Set the soft delete timestamp
+    await this.userRepository.save(user);
+  }
+
+  async restoreUser(id:string) : Promise<User> {
+    const result = await this.userRepository.restore(id);
+
+    if(!result.affected) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return this.getUserById(id);
   }
 }
