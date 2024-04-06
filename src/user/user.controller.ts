@@ -12,15 +12,15 @@ import {
   NotFoundException,
   ForbiddenException,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthMiddleware } from 'src/middlewares/auth.middleware';
-import { AuthService } from '../utils/auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { PaginationDto } from '../utils/pagination.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -28,12 +28,16 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly authService: AuthService,
   ) {}
 
   @Get()
   async getUsers(): Promise<User[]> {
     return this.userService.getUsers();
+  }
+
+  @Get('page')
+  async getUsersPerPage(@Query() paginationDto: PaginationDto): Promise<User[]> {
+    return this.userService.getUsersPerPage(paginationDto);
   }
 
   @Get(':id')
@@ -61,7 +65,6 @@ export class UserController {
     }
 
     if (userId !== user.id) {
-      console.log(userId +"    " +user.id)
       throw new ForbiddenException('You are not allowed to update this user');
     }
 

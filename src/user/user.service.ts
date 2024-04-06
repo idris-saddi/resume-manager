@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Resume } from 'src/resume/entities/resume.entity';
+import { PaginationDto } from 'src/utils/pagination.dto';
 
 @Injectable()
 export class UserService {
@@ -24,6 +25,15 @@ export class UserService {
 
   async getUsers(): Promise<User[]> {
     return await this.userRepository.find();
+  }
+
+  async getUsersPerPage(paginationDto: PaginationDto): Promise<User[]> {
+    const perPage = paginationDto.perPage;
+    const offset = (paginationDto.page - 1) * perPage;
+    return await this.userRepository.find({
+      skip: offset,
+      take: perPage,
+    });
   }
 
   async getUserById(id: string): Promise<User> {

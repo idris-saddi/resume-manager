@@ -16,11 +16,11 @@ import {
 import { ResumeService } from './resume.service';
 import { Resume } from './entities/resume.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { AgeCriteriaDto } from './dto/age-criteria.dto';
+import { PaginationDto } from '../utils/pagination.dto';
 
 @ApiTags('resumes')
 @Controller('resumes')
@@ -31,6 +31,11 @@ export class ResumeController {
   @Get()
   async getResumes(@Query() ageCriteriaDto: AgeCriteriaDto): Promise<Resume[]> {
     return this.resumeService.getResumes(ageCriteriaDto);
+  }
+
+  @Get('page')
+  async getResumesPerPage(@Query() paginationDto: PaginationDto): Promise<Resume[]> {
+    return this.resumeService.getResumesPerPage(paginationDto);
   }
 
   @Get(':id')

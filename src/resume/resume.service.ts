@@ -9,8 +9,9 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Resume } from './entities/resume.entity';
 import { CreateResumeDto } from './dto/create-resume.dto';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { AgeCriteriaDto } from './dto/age-criteria.dto';
+import { PaginationDto } from '../utils/pagination.dto';
 
 @Injectable()
 export class ResumeService {
@@ -50,6 +51,15 @@ export class ResumeService {
     }
 
     return query.getMany();
+  }
+
+  async getResumesPerPage(paginationDto : PaginationDto): Promise<Resume[]> {
+    const perPage = paginationDto.perPage
+    const offset = (paginationDto.page - 1) * perPage;
+    return await this.resumeRepository.find({
+      skip: offset,
+      take: perPage,
+    });
   }
 
   async getResumesByUser(userId: string): Promise<Resume[]> {

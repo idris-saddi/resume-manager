@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Skill } from './entities/skill.entity';
 import { CreateSkillDto } from './dto/create-skill.dto';
+import { PaginationDto } from '../utils/pagination.dto';
 
 @Injectable()
 export class SkillService {
@@ -20,6 +21,15 @@ export class SkillService {
 
   async getSkills(): Promise<Skill[]> {
     return await this.skillRepository.find();
+  }
+
+  async getSkillsPerPage(paginationDto : PaginationDto): Promise<Skill[]> {
+    const perPage = paginationDto.perPage
+    const offset = (paginationDto.page - 1) * perPage;
+    return await this.skillRepository.find({
+      skip: offset,
+      take: perPage,
+    });
   }
 
   async getSkillById(id: string): Promise<Skill> {

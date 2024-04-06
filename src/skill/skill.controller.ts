@@ -11,13 +11,14 @@ import {
   UseGuards,
   NotFoundException,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { SkillService } from './skill.service';
 import { Skill } from './entities/skill.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
+import { PaginationDto } from '../utils/pagination.dto';
 
 @ApiTags('skills')
 @Controller('skills')
@@ -28,6 +29,11 @@ export class SkillController {
   @Get()
   async getSkills(): Promise<Skill[]> {
     return this.skillService.getSkills();
+  }
+
+  @Get('page')
+  async getSkillsPerPage(@Query() paginationDto: PaginationDto): Promise<Skill[]> {
+    return this.skillService.getSkillsPerPage(paginationDto);
   }
 
   @Get(':id')
