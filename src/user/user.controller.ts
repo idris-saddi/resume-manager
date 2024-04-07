@@ -13,6 +13,8 @@ import {
   ForbiddenException,
   Patch,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,6 +23,9 @@ import { User } from './entities/user.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationDto } from '../utils/pagination.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { v4 as uuidv4 } from 'uuid';
 
 @ApiTags('users')
 @Controller('users')
@@ -95,4 +100,22 @@ export class UserController {
   restore(@Param('id') id: string) : Promise<User> {
     return this.userService.restoreUser(id);
   }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const randomName = uuidv4() + file.originalname;
+          callback(null, randomName);
+        },
+      }),
+    }),
+  )
+  async uploadImage(@UploadedFile() file) {
+    // Traiter l'upload ici
+    return { filename: file.filename };
+  }
+
 }

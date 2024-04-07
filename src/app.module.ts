@@ -28,6 +28,7 @@ import { ResumeService } from './resume/resume.service';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { AuthService } from './utils/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -41,6 +42,18 @@ import { JwtService } from '@nestjs/jwt';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+    }),
+    MulterModule.register({
+      dest: './uploads', // Dossier de destination des fichiers uploadés
+      limits: {
+        fileSize: 1024 * 1024, // Limite de taille à 1 Mo
+      },
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+          return callback(new Error('Only image files are allowed!'), false);
+        }
+        callback(null, true);
+      },
     }),
     ResumeModule,
     UserModule,
