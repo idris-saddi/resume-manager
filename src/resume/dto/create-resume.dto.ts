@@ -1,7 +1,7 @@
 // create-resume.dto.ts
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateResumeDto {
   @ApiProperty({ description: 'The first name of the person' })
@@ -23,8 +23,4 @@ export class CreateResumeDto {
   @ApiProperty({ description: 'The job title of the person' })
   @IsString()
   readonly job: string;
-
-  @ApiProperty({ description: 'The URL path of the person' })
-  @IsString()
-  readonly path: string;
 }

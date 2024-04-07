@@ -28,9 +28,4 @@ export class UpdateResumeDto {
   @IsString()
   @IsOptional()
   readonly job?: string;
-
-  @ApiProperty({ description: 'The path of the resume file', required: false })
-  @IsString()
-  @IsOptional()
-  readonly path?: string;
 }

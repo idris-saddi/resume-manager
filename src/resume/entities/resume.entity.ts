@@ -32,8 +32,8 @@ export class Resume extends Timestamp {
   @Column()
   job: string;
 
-  @Column()
-  path: string;
+  @Column({ nullable: true })
+  image: string;
 
   @ManyToOne(() => User, (user) => user.resumes)
   user: User;

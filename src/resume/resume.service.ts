@@ -12,6 +12,7 @@ import { CreateResumeDto } from './dto/create-resume.dto';
 import { UserService } from '../user/user.service';
 import { AgeCriteriaDto } from './dto/age-criteria.dto';
 import { PaginationDto } from '../utils/pagination.dto';
+import { UpdateResumeDto } from './dto/update-resume.dto';
 
 @Injectable()
 export class ResumeService {
@@ -85,9 +86,15 @@ export class ResumeService {
   async updateResume(
     userId: string,
     id: string,
-    resumeData: any,
+    UpdateResumeDto: UpdateResumeDto,
   ): Promise<Resume> {
-    const resume = await this.resumeRepository.findOneBy({ id });
+    const resume = await this.resumeRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['user'],
+    });
+
     if (!resume) {
       throw new NotFoundException(`Resume with ID ${id} not found`);
     }
@@ -98,7 +105,32 @@ export class ResumeService {
       );
     }
 
-    this.resumeRepository.merge(resume, resumeData);
+    this.resumeRepository.merge(resume, UpdateResumeDto);
+    return await this.resumeRepository.save(resume);
+  }
+
+  async addImage(
+    userId: string,
+    id: string,
+    fileName: string,
+  ): Promise<Resume> {
+    const resume = await this.resumeRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['user'],
+    });
+    if (!resume) {
+      throw new NotFoundException(`Resume with ID ${id} not found`);
+    }
+
+    if (resume.user.id !== userId) {
+      throw new UnauthorizedException(
+        'You are not allowed to update the image of resume',
+      );
+    }
+
+    this.resumeRepository.merge(resume, {image : fileName});
     return await this.resumeRepository.save(resume);
   }
 

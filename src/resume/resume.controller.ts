@@ -12,6 +12,8 @@ import {
   Patch,
   Req,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ResumeService } from './resume.service';
 import { Resume } from './entities/resume.entity';
@@ -21,6 +23,9 @@ import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { AgeCriteriaDto } from './dto/age-criteria.dto';
 import { PaginationDto } from '../utils/pagination.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { v4 as uuidv4 } from 'uuid';
 
 @ApiTags('resumes')
 @Controller('resumes')
@@ -34,7 +39,9 @@ export class ResumeController {
   }
 
   @Get('page')
-  async getResumesPerPage(@Query() paginationDto: PaginationDto): Promise<Resume[]> {
+  async getResumesPerPage(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<Resume[]> {
     return this.resumeService.getResumesPerPage(paginationDto);
   }
 
@@ -87,5 +94,27 @@ export class ResumeController {
   ): Promise<Resume> {
     const userId = req['userId'];
     return this.resumeService.restoreResume(userId, id);
+  }
+
+  @Post('/:id/upload')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const randomName = uuidv4() + '-' + file.originalname;
+          callback(null, randomName);
+        },
+      }),
+    }),
+  )
+  async uploadImage(
+    @Param('id') id: string,
+    @UploadedFile() file,
+    @Req() req: Request,
+  ) {
+    const filename = file.filename;
+    const userId = req['userId']; // Get the user id from the request
+    return this.resumeService.addImage(userId, id, filename);
   }
 }
