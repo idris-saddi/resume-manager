@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 import { AuthService } from '../utils/auth.service';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from 'src/utils/jwt.strategy';
+import { JwtStrategy } from '../utils/jwt.strategy';
 
 @Module({
   imports: [

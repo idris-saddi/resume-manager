@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { LoginDto } from './user/dto/login.dto';
+import { LoginDto } from './utils/login.dto';
 import { AuthService } from './utils/auth.service';
 
 @Controller()

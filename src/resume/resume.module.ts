@@ -6,7 +6,7 @@ import { SkillModule } from '../skill/skill.module';
 import { Skill } from '../skill/entities/skill.entity';
 import { User } from '../user/entities/user.entity';
 import { ResumeService } from './resume.service';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Resume, User, Skill]), SkillModule],

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { randEmail, randPassword, randUserName } from '@ngneat/falso';
 import { ResumeSeederService } from '../resume/resume.seeder.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UserSeederService {
@@ -18,10 +19,14 @@ export class UserSeederService {
   async seed() {
     const fakeUsers = await Promise.all(
       Array.from({ length: 10 }, async () => {
+        const salt = crypto.randomBytes(16).toString('hex');
+        const password = crypto.pbkdf2Sync(randPassword(), salt, 10000, 64, 'sha512').toString('hex');
+
         const user = await this.userRepository.create({
           username: randUserName(),
           email: randEmail(),
-          password: randPassword(),
+          password,
+          salt,
         });
         return user;
       }),

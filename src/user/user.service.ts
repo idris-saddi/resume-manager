@@ -8,8 +8,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Resume } from 'src/resume/entities/resume.entity';
-import { PaginationDto } from 'src/utils/pagination.dto';
+import { PaginationDto } from '../utils/pagination.dto';
 
 @Injectable()
 export class UserService {
