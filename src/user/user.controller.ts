@@ -21,6 +21,7 @@ import { User } from './entities/user.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationDto } from '../utils/pagination.dto';
+import { AdminGuard } from '../utils/admin.gard';
 
 @ApiTags('users')
 @Controller('users')
@@ -31,6 +32,7 @@ export class UserController {
   ) {}
 
   @Get()
+  @UseGuards(AdminGuard)
   async getUsers(): Promise<User[]> {
     return this.userService.getUsers();
   }

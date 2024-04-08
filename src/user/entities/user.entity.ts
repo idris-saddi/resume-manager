@@ -22,6 +22,9 @@ export class User extends Timestamp {
   @Column()
   salt: string;
 
+  @Column({ default: 'member' }) // Default role is 'member'
+  role: string;
+
   @OneToMany(() => Resume, (resume) => resume.user)
   resumes: Resume[];
 }
