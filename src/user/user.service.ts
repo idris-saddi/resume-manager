@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { PaginationDto } from '../utils/pagination.dto';
+import { hashSync, genSaltSync } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -18,8 +19,30 @@ export class UserService {
   ) {}
 
   async createUser(userDto: CreateUserDto): Promise<User> {
-    const user = this.userRepository.create(userDto);
-    return await this.userRepository.save(user);
+    const { username, email, password } = userDto;
+
+    // Check if a user with the given email or username already exists
+    const existingUser = await this.userRepository.findOne({
+      where: [{ email }, { username }],
+    });
+    if (existingUser) {
+      throw new ConflictException('User with this email or username already exists');
+    }
+
+    // Hash the password
+    const salt = genSaltSync(10);
+    const hashedPassword = hashSync(password, salt);
+
+    // Create a new user with the hashed password
+    const newUser = this.userRepository.create({
+      username,
+      email,
+      password: hashedPassword,
+      salt,
+    });
+
+    // Save the new user
+    return await this.userRepository.save(newUser);
   }
 
   async getUsers(): Promise<User[]> {

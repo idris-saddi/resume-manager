@@ -45,11 +45,6 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
-  @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.createUser(createUserDto);
-  }
-
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
   async updateUser(
