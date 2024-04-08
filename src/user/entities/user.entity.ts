@@ -24,14 +24,4 @@ export class User extends Timestamp {
 
   @OneToMany(() => Resume, (resume) => resume.user)
   resumes: Resume[];
-
-  setPassword(password: string) {
-    this.salt = crypto.randomBytes(16).toString('hex');
-    this.password = crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('hex');
-  }
-
-  validatePassword(password: string): boolean {
-    const hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('hex');
-    return this.password === hash;
-  }
 }
