@@ -1,73 +1,188 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Resume Manager API
 
 ## Description
+The Resume Manager API is a backend system designed to manage resumes, skills, and users. It provides endpoints for creating, updating, and deleting resumes, as well as managing skills and user accounts. The API allows users to store and retrieve their resumes, manage their skills, and update their account information.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
+- **User Management:** Users can register, login, and update their account information.
+- **Resume Management:** Users can create, update, and delete their resumes.
+- **Skill Management:** Users can manage their skills, including adding new skills and updating existing ones.
+- **Authentication and Authorization:** The API uses JWT (JSON Web Tokens) for authentication, allowing users to access their data securely.
 
-## Installation
+## Technologies Used
+- **NestJS:** A progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
+- **TypeORM:** An Object-Relational Mapping (ORM) library that supports various databases and simplifies database operations.
+- **Swagger:** Used for API documentation to describe and document the endpoints, request/response bodies, and schemas.
+- **bcrypt:** A library used for hashing passwords to ensure secure storage and authentication.
+- **JWT:** JSON Web Tokens are used for authentication and authorization, providing a secure way to transmit information between parties.
+-  **@ngneat/falso:** A library used for seeding database entities with fake data.
 
+## Getting Started
+To run the API locally, follow these steps:
+
+1. Clone the repository: `git clone https://github.com/your-repo/resume-manager-api.git`
+2. Install dependencies: `npm install`
+3. Set up your environment variables (e.g., database connection string, JWT secret key).
 ```bash
-$ npm install
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=myusername
+DB_PASSWORD=mypassword
+DB_DATABASE=mydatabase
+
+JWT_SECRET=myjwtsecret
+#Replace myusername, mypassword, mydatabase, and myjwtsecret with your actual database credentials and JWT secret.
+```
+5. Run the application: `npm start`
+
+## Seeding the Database
+You can seed the database with fake data using the @ngneat/falso library. To seed the database, run the following command:
+```bash
+npm run seed:db
 ```
 
-## Running the app
+## API Documentation
+The API documentation can be accessed using Swagger UI. After running the application, navigate to `http://localhost:4949/api` in your browser to view the API documentation.
 
-```bash
-# development
-$ npm run start
+## Endpoints
 
-# watch mode
-$ npm run start:dev
+### Skills
 
-# production mode
-$ npm run start:prod
-```
+- **GET** `/skills`
+  - Description: List all skills
+  - Response: Array of [Skill](#skill) objects
 
-## Test
+- **POST** `/skills`
+  - Description: Create a new skill
+  - Request Body: [CreateSkillDto](#createskilldto)
+  - Response: [Skill](#skill) object
 
-```bash
-# unit tests
-$ npm run test
+- **PUT** `/skills/{id}`
+  - Description: Update a skill
+  - Parameters: Skill ID
+  - Request Body: [UpdateSkillDto](#updateskilldto)
+  - Response: [Skill](#skill) object
 
-# e2e tests
-$ npm run test:e2e
+- **DELETE** `/skills/{id}`
+  - Description: Delete a skill
+  - Parameters: Skill ID
 
-# test coverage
-$ npm run test:cov
-```
+- **PATCH** `/skills/restore/{id}`
+  - Description: Restore a deleted skill
+  - Parameters: Skill ID
+  - Response: [Skill](#skill) object
 
-## Support
+### Users
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **GET** `/users`
+  - Description: List all users
+  - Response: Array of [User](#user) objects
 
-## Stay in touch
+- **GET** `/users/page`
+  - Description: Paginated list of users
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **GET** `/users/me`
+  - Description: Get current user details
 
-## License
+- **GET** `/users/{id}`
+  - Description: Get user by ID
+  - Parameters: User ID
 
-Nest is [MIT licensed](LICENSE).
+- **PUT** `/users/{id}`
+  - Description: Update user details
+  - Parameters: User ID
+  - Request Body: [UpdateUserDto](#updateuserdto)
+  - Response: [User](#user) object
+
+- **DELETE** `/users/{id}`
+  - Description: Delete a user
+  - Parameters: User ID
+
+- **PATCH** `/users/restore/{id}`
+  - Description: Restore a deleted user
+  - Parameters: User ID
+  - Response: [User](#user) object
+
+### Resumes
+
+- **GET** `/resumes`
+  - Description: List all resumes
+  - Response: Array of [Resume](#resume) objects
+
+- **POST** `/resumes`
+  - Description: Create a new resume
+  - Request Body: [CreateResumeDto](#createresumedto)
+  - Response: [Resume](#resume) object
+
+- **GET** `/resumes/page`
+  - Description: Paginated list of resumes
+
+- **GET** `/resumes/{id}`
+  - Description: Get resume by ID
+  - Parameters: Resume ID
+
+- **PUT** `/resumes/{id}`
+  - Description: Update a resume
+  - Parameters: Resume ID
+  - Request Body: [UpdateResumeDto](#updateresumedto)
+  - Response: [Resume](#resume) object
+
+- **DELETE** `/resumes/{id}`
+  - Description: Delete a resume
+  - Parameters: Resume ID
+
+- **GET** `/resumes/user/me`
+  - Description: Get resumes of the current user
+
+- **GET** `/resumes/user/{userId}`
+  - Description: Get resumes of a user by ID
+  - Parameters: User ID
+
+- **PATCH** `/resumes/restore/{id}`
+  - Description: Restore a deleted resume
+  - Parameters: Resume ID
+
+- **POST** `/resumes/upload`
+  - Description: Upload an image for a resume
+
+## Schemas
+
+### LoginDto
+- `email: string`
+- `password: string`
+
+### CreateUserDto
+- `username: string`
+- `email: string`
+- `password: string`
+
+### CreateSkillDto
+- `label: string`
+
+### UpdateSkillDto
+- `label?: string`
+
+### UpdateUserDto
+- `username?: string`
+- `email?: string`
+- `password?: string`
+
+### CreateResumeDto
+- `firstname: string`
+- `lastname: string`
+- `age: number`
+- `cin: string`
+- `job: string`
+
+### UpdateResumeDto
+- `firstname?: string`
+- `lastname?: string`
+- `age?: number`
+- `cin?: string`
+- `job?: string`
+
+## Authorization
+Certain endpoints require users to have specific roles, such as admin or member, to access them. This is enforced using the AdminGuard guard.
+
+## Contributing
+Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue or submit a pull request.
