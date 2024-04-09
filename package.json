@@ -1,8 +1,8 @@
 {
   "name": "resume-manager",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "The Resume Manager API is a backend system designed to manage resumes, skills, and users. It provides endpoints for creating, updating, and deleting resumes, as well as managing skills and user accounts. The API allows users to store and retrieve their resumes, manage their skills, and update their account information.",
+  "author": "Idris Saddi",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
