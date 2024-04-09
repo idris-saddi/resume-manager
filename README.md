@@ -3,6 +3,8 @@
 ## Description
 The Resume Manager API is a backend system designed to manage resumes, skills, and users. It provides endpoints for creating, updating, and deleting resumes, as well as managing skills and user accounts. The API allows users to store and retrieve their resumes, manage their skills, and update their account information.
 
+for fun, this is my conversation with chatGPT all during the dev: https://chat.openai.com/share/bfbe681d-5bca-4d30-a4ae-71b0f91111d0
+
 ## Features
 - **User Management:** Users can register, login, and update their account information.
 - **Resume Management:** Users can create, update, and delete their resumes.
