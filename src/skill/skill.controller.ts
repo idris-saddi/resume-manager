@@ -19,6 +19,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { PaginationDto } from '../utils/pagination.dto';
+import { AdminGuard } from '../utils/admin.gard';
 
 @ApiTags('skills')
 @Controller('skills')
@@ -47,6 +48,7 @@ export class SkillController {
   }
 
   @Put(':id')
+  @UseGuards(AdminGuard)
   async updateSkill(
     @Param('id') id: string,
     @Body() skillData: UpdateSkillDto,
@@ -55,11 +57,13 @@ export class SkillController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminGuard)
   async deleteSkill(@Param('id') id: string): Promise<void> {
     await this.skillService.deleteSkill(id);
   }
 
   @Patch('restore/:id')
+  @UseGuards(AdminGuard)
   async restoreSkill(@Param('id') id: string): Promise<Skill> {
     return this.skillService.restoreSkill(id);
   }

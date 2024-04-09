@@ -110,7 +110,6 @@ export class ResumeService {
   }
 
   async addImage(
-    userId: string,
     id: string,
     fileName: string,
   ): Promise<Resume> {
@@ -122,12 +121,6 @@ export class ResumeService {
     });
     if (!resume) {
       throw new NotFoundException(`Resume with ID ${id} not found`);
-    }
-
-    if (resume.user.id !== userId) {
-      throw new UnauthorizedException(
-        'You are not allowed to update the image of resume',
-      );
     }
 
     this.resumeRepository.merge(resume, {image : fileName});

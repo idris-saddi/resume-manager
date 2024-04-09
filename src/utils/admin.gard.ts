@@ -1,20 +1,14 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { User } from '../user/entities/user.entity';
-import { UserService } from '../user/user.service';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private readonly userService: UserService,
-  ) {}
+  constructor() {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const id = context.switchToHttp().getRequest().userId;
-
-    const user = await this.userService.getUserById(id);
-
+    const user = context.switchToHttp().getRequest().user as JwtPayload;
+    console.log(user);
+    
     if (!user || user.role !== 'admin') {
       return false;
     }
