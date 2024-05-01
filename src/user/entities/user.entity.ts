@@ -3,7 +3,7 @@
 import { Timestamp } from '../../utils/timestamp.entity';
 import { Resume } from '../../resume/entities/resume.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import * as crypto from 'crypto';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User extends Timestamp {
@@ -17,9 +17,11 @@ export class User extends Timestamp {
   email: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   salt: string;
 
   @Column({ default: 'member' }) // Default role is 'member'
@@ -27,4 +29,9 @@ export class User extends Timestamp {
 
   @OneToMany(() => Resume, (resume) => resume.user)
   resumes: Resume[];
+
+  constructor(partial: Partial<User>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

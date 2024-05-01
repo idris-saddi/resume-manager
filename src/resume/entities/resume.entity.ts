@@ -35,10 +35,10 @@ export class Resume extends Timestamp {
   @Column({ nullable: true })
   image: string;
 
-  @ManyToOne(() => User, (user) => user.resumes)
+  @ManyToOne(() => User, (user) => user.resumes, {eager:true})
   user: User;
 
-  @ManyToMany(() => Skill, (skill) => skill.resumes)
+  @ManyToMany(() => Skill, (skill) => skill.resumes , {eager:true})
   @JoinTable()
   skills: Skill[];
 }

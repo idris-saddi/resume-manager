@@ -12,6 +12,8 @@ import {
   ForbiddenException,
   Patch,
   Query,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -25,6 +27,7 @@ import { GetUser } from '../utils/user.decorator';
 @ApiTags('users')
 @Controller('users')
 @ApiBearerAuth()
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(
     private readonly userService: UserService,

@@ -14,6 +14,8 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  ClassSerializerInterceptor,
+  StreamableFile,
 } from '@nestjs/common';
 import { ResumeService } from './resume.service';
 import { Resume } from './entities/resume.entity';
@@ -28,9 +30,11 @@ import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { AdminGuard } from '../utils/admin.gard';
 import { GetUser } from '../utils/user.decorator';
+import { createReadStream } from 'fs';
 
 @ApiTags('resumes')
 @Controller('resumes')
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiBearerAuth()
 export class ResumeController {
   constructor(private readonly resumeService: ResumeService) {}
@@ -91,7 +95,7 @@ export class ResumeController {
     await this.resumeService.deleteResume(user.id, id);
   }
 
-  @Post('upload')
+  @Post('upload/:id')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('image', {
@@ -104,9 +108,22 @@ export class ResumeController {
       }),
     }),
   )
-  async uploadImage(@UploadedFile() file, @GetUser() user) {
+  async uploadImage(
+    @UploadedFile() file,
+    @GetUser() user,
+    @Param('id') resumeId: string,
+  ) {
     const filename = file.filename;
-    return this.resumeService.addImage(user.id, filename);
+    return this.resumeService.addImage(user.id, resumeId, filename);
+  }
+
+  @Get('image/:id')
+  async getImage(@Param('id') id: string, @GetUser() user) {
+    const imagePath = await this.resumeService.getImage(id, user.id); 
+    console.log(imagePath);
+    
+    const file = createReadStream(imagePath);
+    return new StreamableFile(file);
   }
 
   @Patch('restore/:id')

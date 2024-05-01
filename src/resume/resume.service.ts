@@ -13,6 +13,8 @@ import { UserService } from '../user/user.service';
 import { AgeCriteriaDto } from './dto/age-criteria.dto';
 import { PaginationDto } from '../utils/pagination.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ResumeService {
@@ -110,6 +112,7 @@ export class ResumeService {
   }
 
   async addImage(
+    userId: string,
     id: string,
     fileName: string,
   ): Promise<Resume> {
@@ -121,6 +124,12 @@ export class ResumeService {
     });
     if (!resume) {
       throw new NotFoundException(`Resume with ID ${id} not found`);
+    }
+
+    if(resume.user.id !== userId) {
+      throw new UnauthorizedException(
+        'You are not allowed to update this resume',
+      );
     }
 
     this.resumeRepository.merge(resume, {image : fileName});
@@ -160,5 +169,31 @@ export class ResumeService {
     }
 
     return resume;
+  }
+
+
+  // get image by resume id
+  async getImage(resumeId: string, userId: string): Promise<string> {
+    const resume = await this.resumeRepository.findOne({
+      where: {
+        id: resumeId,
+      },
+    });
+    if (!resume) {
+      throw new NotFoundException(`Resume with ID ${resumeId} not found`);
+    }
+
+    // check if the image is null
+    if (!resume.image) {
+      throw new NotFoundException(`Image not found for resume with ID ${resumeId}`);
+    }
+
+    // check if the user is admin of the owner of the resume
+    if (resume.user.role !== 'admin' && resume.user.id !== resumeId) {
+      throw new UnauthorizedException('You are not allowed to view this image');
+    }
+
+    // return path to the image
+    return path.resolve(__dirname, '..', '..', 'uploads', resume.image);
   }
 }
