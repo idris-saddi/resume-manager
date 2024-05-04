@@ -195,5 +195,6 @@ export class ResumeService {
 
     // return path to the image
     return path.resolve(__dirname, '..', '..', 'uploads', resume.image);
+    // return resume.image;
   }
 }

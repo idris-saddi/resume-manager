@@ -10,12 +10,11 @@ import {
   Delete,
   UseGuards,
   Patch,
-  Req,
   Query,
   UseInterceptors,
   UploadedFile,
   ClassSerializerInterceptor,
-  StreamableFile,
+  Res,
 } from '@nestjs/common';
 import { ResumeService } from './resume.service';
 import { Resume } from './entities/resume.entity';
@@ -31,6 +30,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { AdminGuard } from '../utils/admin.gard';
 import { GetUser } from '../utils/user.decorator';
 import { createReadStream } from 'fs';
+import { Response } from 'express';
+
 
 @ApiTags('resumes')
 @Controller('resumes')
@@ -118,12 +119,14 @@ export class ResumeController {
   }
 
   @Get('image/:id')
-  async getImage(@Param('id') id: string, @GetUser() user) {
-    const imagePath = await this.resumeService.getImage(id, user.id); 
+  @UseGuards(AuthGuard('jwt'))
+  async getImage(@Param('id') id: string, @GetUser() user,@Res() res: Response,) {
+    const imagePath = await this.resumeService.getImage(id, user.id);   
     console.log(imagePath);
-    
-    const file = createReadStream(imagePath);
-    return new StreamableFile(file);
+
+    res.set('Content-Type', 'image/jpeg');
+
+    createReadStream(imagePath).pipe(res);
   }
 
   @Patch('restore/:id')
